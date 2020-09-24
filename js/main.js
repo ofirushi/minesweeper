@@ -69,8 +69,11 @@ function checkVictory() {
         var name = prompt('You won!! Please enter your name: ')
         var time = document.getElementById('timer').innerText
         var level = getCurrLevel()
-        localStorage.setItem('name' + level, name)
-        localStorage.setItem('score' + level, time)
+        if(parseInt(localStorage.getItem('score' + level + ''))>time){
+
+            localStorage.setItem('name' + level, name)
+            localStorage.setItem('score' + level, time)
+        }
 
 
     }
@@ -315,6 +318,7 @@ function jigglePeak(cellI, cellJ, mat) {
             if (k < 0 || k >= mat.length) continue;
             for (var l = cellJ - 1; l <= cellJ + 1; l++) {
                 if (l < 0 || l >= mat[k].length) continue;
+                if(mat[k][l].isShown)continue
                 var cellId = '' + k + l
                 document.getElementById(cellId).innerText = ''
             }
@@ -327,7 +331,6 @@ function loadHighScore() {
     var level = getCurrLevel()
     var name = localStorage.getItem('name' + level + '')
     var score = localStorage.getItem('score' + level + '')
-    console.log(level, name, score)
     document.getElementById('high-score').innerText = (typeof(score)==='object')? 'No high score':'High Score- Name: ' + name + ' | Score:' + score + ''
 
 }
