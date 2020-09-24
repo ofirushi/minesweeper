@@ -99,7 +99,7 @@ function renderBoard(board) {
         var row = board[i]
         for (var j = 0; j < board.length; j++) {
             var cell = row[j]
-            var id = '' + i + j
+            var id = '' + i+'-' + j
             htmlStr += '<td oncontextmenu="return false" onmousedown="cellClicked(event,this)" id="' + id + '" class="cell"></td>'
         }
         htmlStr += '</tr>'
@@ -151,7 +151,6 @@ function mineClicked(cellId) {
     if (gGame.lives <= 1) {
         document.querySelector('input').src = 'img/lose.png'
         for (var i = 0; i < gGame.minesLocations.length; i++) {
-            // var mineLocation = Array.from(gGame.minesLocations[i])
             var mineId = gGame.minesLocations[i]
             document.getElementById(mineId).innerHTML = MINE
 
@@ -163,21 +162,24 @@ function mineClicked(cellId) {
         document.getElementById(cellId).innerHTML = MINE
         gGame.lives--
         document.getElementById('lives').innerText = LIFE.repeat([gGame.lives])
+        var cellPos = getPosByIdArray(cellId)
+        gBoard[cellPos[0]][cellPos[1]].isShown=true
     }
 }
 
 function firstMove(cellId) {
     startStopper()
-    var cellPos = Array.from(cellId)
+    var cellPos = cellId.split('-')
+    console.log(cellPos)
     for (var i = 0; i < gLevel.MINES;) {
         var y = getRandomInt(0, gLevel.SIZE)
         var x = getRandomInt(0, gLevel.SIZE)
-        var nextMine = '' + y + x
+        var nextMine = '' + y +'-'+ x
 
 
         if (cellId !== nextMine && !gBoard[y][x].isMine && !isNeg(cellPos[0], cellPos[1], y, x, gBoard)) {
             gBoard[y][x].isMine = true
-            gGame.minesLocations.push('' + y + x)
+            gGame.minesLocations.push('' + y +'-'+ x)
             i++
         }
     }
@@ -229,7 +231,7 @@ function cellClicked(event, elCell) {
 }
 
 function getPosByIdArray(cellId) {
-    return Array.from(cellId)
+    return cellId.split('-')
 }
 
 function startStopper() {
@@ -286,14 +288,14 @@ function openNegs(cellI, cellJ, mat) {
 function showCell(cellI, cellJ) {
     gBoard[cellI][cellJ].isShown = true
     gGame.shownCount++
-    var cellId = '' + cellI + cellJ
+    var cellId = '' + cellI+'-' + cellJ
     document.getElementById(cellId).innerText = gBoard[cellI][cellJ].minesAroundCount
 }
 
 
 
 function hint(idx) {
-    if (gGame.hints[idx]) {
+    if (gGame.hints[idx]&&gGame.isOn) {
         gIsHint = true
         gGame.hints[idx] = false
         document.getElementById("hint" + idx + "").src = "img/off-hint.png"
@@ -307,7 +309,7 @@ function jigglePeak(cellI, cellJ, mat) {
         if (i < 0 || i >= mat.length) continue;
         for (var j = cellJ - 1; j <= cellJ + 1; j++) {
             if (j < 0 || j >= mat[i].length) continue;
-            var cellId = '' + i + j
+            var cellId = '' + i+'-' + j
             if (mat[i][j].isMine) document.getElementById(cellId).innerText = MINE
             else document.getElementById(cellId).innerText = gBoard[i][j].minesAroundCount
         }
@@ -319,7 +321,7 @@ function jigglePeak(cellI, cellJ, mat) {
             for (var l = cellJ - 1; l <= cellJ + 1; l++) {
                 if (l < 0 || l >= mat[k].length) continue;
                 if(mat[k][l].isShown)continue
-                var cellId = '' + k + l
+                var cellId = '' + k +'-'+ l
                 document.getElementById(cellId).innerText = ''
             }
         }
