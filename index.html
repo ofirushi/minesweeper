@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,17 +8,35 @@
     <link rel="stylesheet" href="css/main.css">
     <h1 class='headline'>Minesweeper</h1>
 </head>
+
 <body onload="initGame()">
-    <button onclick=initGame(4)>Size: 4x4</button>
-    <button onclick=initGame(8)>Size: 8x8</button>
-    <button onclick=initGame(12)>Size: 6x6</button>
-    <span id="timer">Timer</span> 
-    <table>
-        <tbody class="board"></tbody>
-    </table>
+    <div>
+        <input onclick=initGame(gLevel.SIZE) type="image" src="img/idle.png" />
+    </div>
+    <div class='hints'>
+        <input id='hint0' onclick=hint(0) type="image" src="img/on-hint.png" />
+        <input id='hint1' onclick=hint(1) type="image" src="img/on-hint.png" />
+        <input id='hint2' onclick=hint(2) type="image" src="img/on-hint.png" />
+
+    </div>
+<div>
+    <span id='high-score'></span>
+</div>
+    <div>
+        <span id='lives'>lives</span>
+
+        <button onclick=initGame(4)>Size: 4x4</button>
+        <button onclick=initGame(8)>Size: 8x8</button>
+        <button onclick=initGame(12)>Size: 12x12</button>
+        <span id="timer">Timer</span>
+        <table>
+            <tbody class="board"></tbody>
+        </table>
+    </div>
 
 
 
     <script src="js/main.js"></script>
 </body>
+
 </html>

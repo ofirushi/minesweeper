@@ -6,6 +6,12 @@ table {
     margin: auto;
 }
 
+input{
+width: 60px;
+height: 60px;
+
+}
+
 .cell {
     background: #FFFFFF;
     background-image: -webkit-linear-gradient(top, #FFFFFF, #000000);
