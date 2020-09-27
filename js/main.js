@@ -37,6 +37,7 @@ function initGame(size = 4) {
     stopStopper()
     document.getElementById('lives').innerText = LIFE.repeat([gGame.lives])
     loadHighScore()
+    console.log(typeof localStorage.getItem('score' + getCurrLevel() + ''))
 }
 
 function buildBoard() {
@@ -62,14 +63,17 @@ function buildBoard() {
 }
 
 function checkVictory() {
+    // debugger
     if (gLevel.SIZE ** 2 - gGame.shownCount === gLevel.MINES) {
         document.querySelector('.board').style.pointerEvents = "none"
         stopStopper()
         document.querySelector('input').src = 'img/win.png'
         var name = prompt('You won!! Please enter your name: ')
         var time = document.getElementById('timer').innerText
+        console.log('time: ', time, 'name: ', name)
         var level = getCurrLevel()
-        if(parseInt(localStorage.getItem('score' + level + ''))>time){
+        
+        if (typeof localStorage.getItem('score' + level + '') === 'object' || parseInt(localStorage.getItem('score' + level + '')) > time) {
 
             localStorage.setItem('name' + level, name)
             localStorage.setItem('score' + level, time)
@@ -99,7 +103,7 @@ function renderBoard(board) {
         var row = board[i]
         for (var j = 0; j < board.length; j++) {
             var cell = row[j]
-            var id = '' + i+'-' + j
+            var id = '' + i + '-' + j
             htmlStr += '<td oncontextmenu="return false" onmousedown="cellClicked(event,this)" id="' + id + '" class="cell"></td>'
         }
         htmlStr += '</tr>'
@@ -163,23 +167,22 @@ function mineClicked(cellId) {
         gGame.lives--
         document.getElementById('lives').innerText = LIFE.repeat([gGame.lives])
         var cellPos = getPosByIdArray(cellId)
-        gBoard[cellPos[0]][cellPos[1]].isShown=true
+        gBoard[cellPos[0]][cellPos[1]].isShown = true
     }
 }
 
 function firstMove(cellId) {
     startStopper()
     var cellPos = cellId.split('-')
-    console.log(cellPos)
     for (var i = 0; i < gLevel.MINES;) {
         var y = getRandomInt(0, gLevel.SIZE)
         var x = getRandomInt(0, gLevel.SIZE)
-        var nextMine = '' + y +'-'+ x
+        var nextMine = '' + y + '-' + x
 
 
         if (cellId !== nextMine && !gBoard[y][x].isMine && !isNeg(cellPos[0], cellPos[1], y, x, gBoard)) {
             gBoard[y][x].isMine = true
-            gGame.minesLocations.push('' + y +'-'+ x)
+            gGame.minesLocations.push('' + y + '-' + x)
             i++
         }
     }
@@ -281,6 +284,7 @@ function openNegs(cellI, cellJ, mat) {
             if (mat[i][j].isMarked) continue
             if (mat[i][j].isShown) continue
             showCell(i, j)
+            if (mat[i][j].minesAroundCount === 0) openNegs(i, j, gBoard)
         }
     }
 }
@@ -288,14 +292,36 @@ function openNegs(cellI, cellJ, mat) {
 function showCell(cellI, cellJ) {
     gBoard[cellI][cellJ].isShown = true
     gGame.shownCount++
-    var cellId = '' + cellI+'-' + cellJ
+    var cellId = '' + cellI + '-' + cellJ
     document.getElementById(cellId).innerText = gBoard[cellI][cellJ].minesAroundCount
+    switch (gBoard[cellI][cellJ].minesAroundCount) {
+        case 0:
+            document.getElementById(cellId).style.color = '#ff0000'
+            break;
+        case 1:
+            document.getElementById(cellId).style.color = '#00ff22'
+            break;
+        case 2:
+            document.getElementById(cellId).style.color = '#0011ff'
+            break;
+        case 3:
+            document.getElementById(cellId).style.color = '#fffb00'
+            break;
+        case 4:
+            document.getElementById(cellId).style.color = '#d000fa'
+            break;
+        case 5:
+            document.getElementById(cellId).style.color = '#000000'
+            break;
+        default:
+            break;
+    }
 }
 
 
 
 function hint(idx) {
-    if (gGame.hints[idx]&&gGame.isOn) {
+    if (gGame.hints[idx] && gGame.isOn) {
         gIsHint = true
         gGame.hints[idx] = false
         document.getElementById("hint" + idx + "").src = "img/off-hint.png"
@@ -309,7 +335,7 @@ function jigglePeak(cellI, cellJ, mat) {
         if (i < 0 || i >= mat.length) continue;
         for (var j = cellJ - 1; j <= cellJ + 1; j++) {
             if (j < 0 || j >= mat[i].length) continue;
-            var cellId = '' + i+'-' + j
+            var cellId = '' + i + '-' + j
             if (mat[i][j].isMine) document.getElementById(cellId).innerText = MINE
             else document.getElementById(cellId).innerText = gBoard[i][j].minesAroundCount
         }
@@ -320,8 +346,8 @@ function jigglePeak(cellI, cellJ, mat) {
             if (k < 0 || k >= mat.length) continue;
             for (var l = cellJ - 1; l <= cellJ + 1; l++) {
                 if (l < 0 || l >= mat[k].length) continue;
-                if(mat[k][l].isShown)continue
-                var cellId = '' + k +'-'+ l
+                if (mat[k][l].isShown) continue
+                var cellId = '' + k + '-' + l
                 document.getElementById(cellId).innerText = ''
             }
         }
@@ -333,6 +359,6 @@ function loadHighScore() {
     var level = getCurrLevel()
     var name = localStorage.getItem('name' + level + '')
     var score = localStorage.getItem('score' + level + '')
-    document.getElementById('high-score').innerText = (typeof(score)==='object')? 'No high score':'High Score- Name: ' + name + ' | Score:' + score + ''
+    document.getElementById('high-score').innerText = (typeof (score) === 'object') ? 'No high score' : 'High Score- Name: ' + name + ' | Score:' + score + ''
 
 }
