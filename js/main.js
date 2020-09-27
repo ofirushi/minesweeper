@@ -287,8 +287,8 @@ function openNegs(cellI, cellJ, mat) {
 }
 
 function showCell(cellI, cellJ) {
+    if(!gBoard[cellI][cellJ].isShown) gGame.shownCount++
     gBoard[cellI][cellJ].isShown = true
-    gGame.shownCount++
     var cellId = '' + cellI + '-' + cellJ
     document.getElementById(cellId).innerText = gBoard[cellI][cellJ].minesAroundCount
     switch (gBoard[cellI][cellJ].minesAroundCount) {
