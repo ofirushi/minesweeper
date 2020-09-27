@@ -10,12 +10,12 @@ var gGame
 var gInterval
 var gIsHint = false
 
-function initGame(size = 4) {
+function initGame(size = 9) {
     document.querySelector('input').src = 'img/idle.png'
     var mineCount = 0
-    if (size === 4) mineCount = 2
-    else if (size === 8) mineCount = 12
-    else if (size === 12) mineCount = 30
+    if (size === 9) mineCount = 10
+    else if (size === 16) mineCount = 40
+    else if (size === 22) mineCount = 99
     gLevel = {
         SIZE: size,
         MINES: mineCount
@@ -41,9 +41,6 @@ function initGame(size = 4) {
 }
 
 function buildBoard() {
-    // 4x4 2
-    // 8x8 12
-    // 12x12 30
     var board = [];
 
     for (var i = 0; i < gLevel.SIZE; i++) {
@@ -85,11 +82,11 @@ function checkVictory() {
 
 function getCurrLevel() {
     switch (gLevel.SIZE) {
-        case 4:
+        case 9:
             return 1
-        case 8:
+        case 16:
             return 2
-        case 12:
+        case 22:
             return 3
         default:
             break;
