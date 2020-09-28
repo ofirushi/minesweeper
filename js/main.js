@@ -37,7 +37,6 @@ function initGame(size = 9) {
     stopStopper()
     document.getElementById('lives').innerText = LIFE.repeat([gGame.lives])
     loadHighScore()
-    console.log(typeof localStorage.getItem('score' + getCurrLevel() + ''))
 }
 
 function buildBoard() {
@@ -67,9 +66,8 @@ function checkVictory() {
         document.querySelector('input').src = 'img/win.png'
         var name = prompt('You won!! Please enter your name: ')
         var time = document.getElementById('timer').innerText
-        console.log('time: ', time, 'name: ', name)
         var level = getCurrLevel()
-        
+
         if (typeof localStorage.getItem('score' + level + '') === 'object' || parseInt(localStorage.getItem('score' + level + '')) > time) {
 
             localStorage.setItem('name' + level, name)
@@ -101,7 +99,7 @@ function renderBoard(board) {
         for (var j = 0; j < board.length; j++) {
             var cell = row[j]
             var id = '' + i + '-' + j
-            htmlStr += '<td oncontextmenu="return false" onmousedown="cellClicked(event,this)" id="' + id + '" class="cell"></td>'
+            htmlStr += '<td oncontextmenu="return false" onmouseup="cellClicked(event,this)" id="' + id + '" class="cell"></td>'
         }
         htmlStr += '</tr>'
     }
@@ -210,6 +208,7 @@ function cellClicked(event, elCell) {
             gGame.isOn = true
             firstMove(elCell.id)
         } else {
+
             if (event.which === 1) {
                 if (gBoard[coord[0]][coord[1]].isMarked) {
                     checkVictory()
@@ -225,6 +224,7 @@ function cellClicked(event, elCell) {
                 }
             }
         }
+
         //  else return
     }
     checkVictory()
@@ -256,21 +256,7 @@ function getRandomInt(num1, num2) {
     return (Math.floor(Math.random() * (max - min)) + min)
 }
 
-function openNegsRecursion(cellI, cellJ, mat) {
-    // debugger
-    for (var i = cellI - 1; i <= cellI + 1; i++) {
-        if (i < 0 || i >= mat.length) continue;
-        for (var j = cellJ - 1; j <= cellJ + 1; j++) {
-            if (j < 0 || j >= mat[i].length) continue;
-            if (i === cellI && j === cellJ) continue;
-            var cellId = '' + i + j
-            document.getElementById(cellId).innerText = mat[i][j].minesAroundCount
-            if (mat[i][j].minesAroundCount === 0) openNegsRecursion(i, j, mat)
-            //    else return
-        }
-    }
 
-}
 function openNegs(cellI, cellJ, mat) {
     // debugger
     for (var i = cellI - 1; i <= cellI + 1; i++) {
@@ -286,8 +272,22 @@ function openNegs(cellI, cellJ, mat) {
     }
 }
 
+function countMarkedNegs(cellI, cellJ, mat = gBoard) {
+    var markedSum = 0;
+
+    for (var i = cellI - 1; i <= cellI + 1; i++) {
+        if (i < 0 || i >= mat.length) continue;
+        for (var j = cellJ - 1; j <= cellJ + 1; j++) {
+            if (j < 0 || j >= mat[i].length) continue;
+            if (i === cellI && j === cellJ) continue;
+            if (mat[i][j].isMarked) markedSum++;
+        }
+    }
+    return markedSum;
+}
+
 function showCell(cellI, cellJ) {
-    if(!gBoard[cellI][cellJ].isShown) gGame.shownCount++
+    if (!gBoard[cellI][cellJ].isShown) gGame.shownCount++
     gBoard[cellI][cellJ].isShown = true
     var cellId = '' + cellI + '-' + cellJ
     document.getElementById(cellId).innerText = gBoard[cellI][cellJ].minesAroundCount
