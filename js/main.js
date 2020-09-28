@@ -156,7 +156,7 @@ function mineClicked(cellId) {
         }
         document.querySelector('.board').style.pointerEvents = "none"
         stopStopper()
-        alert('You lose!')
+        // alert('You lose!')
     } else {
         document.getElementById(cellId).innerHTML = MINE
         gGame.lives--
